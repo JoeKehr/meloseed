@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="build.css">
+    <script src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.21.0/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.1.1"></script>
+    <script type="application/javascript">
+
+        var play = false;
+      
+        function changeForm (idForm) {
+            var forms = document.getElementsByTagName('form');
+          
+            for (var i = 0 ; i < forms.length ; ++i) {
+                forms[i].classList.add("hidden");
+            }
+          
+            var form = document.getElementById(idForm);
+            form.classList.remove("hidden");
+          
+        }
+
+    
+        function setup () {
+            console.log("LOAD");
+          
+            console.log(window.location.href);
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            const params = Object.fromEntries(urlSearchParams.entries());
+            console.log(params);
+            var player = document.getElementById('myMusicPlayer');
+            player.addEventListener('load', startSong);
+            if (params.v == '1') {
+                
+              if (params.seed) {
+                var seed = document.getElementById('seed');
+                seed.value = params.seed;
+              }
+              
+              getSong(false);
+            }
+            if (params.v == '2') {
+                
+              if (params.seed) {
+                var seed = document.getElementById('seedV2');
+                seed.value = params.seed;
+              }
+              if (params.scale) {
+                var scale = document.getElementById('scaleV2');
+                scale.value = params.scale;
+              }
+              if (params.tempo) {
+                var tempo = document.getElementById('tempoV2');
+                tempo.value = params.tempo;
+              }
+              if (params.instrument) {
+                var instrument = document.getElementById('instrumentV2');
+                instrument.value = params.instrument;
+              }
+              if (params.rhythmActive) {
+                var rhythmActive = document.getElementById('rhythmActiveV2');
+                rhythmActive.checked = params.rhythmActive;
+                
+                if (rhythmActive) {
+                  if (params.whole) {
+                    var whole = document.getElementById('wholeV2');
+                    whole.value = params.whole;
+                  }
+                  if (params.half) {
+                    var half = document.getElementById('halfV2');
+                    half.value = params.half;
+                  }
+                  if (params.quarter) {
+                    var quarter = document.getElementById('quarterV2');
+                    quarter.value = params.quarter;
+                  }
+                  if (params.eighth) {
+                    var eighth = document.getElementById('eighthV2');
+                    eighth.value = params.eighth;
+                  }
+                  if (params.sixteenth) {
+                    var sixteenth = document.getElementById('sixteenthV2');
+                    sixteenth.value = params.sixteenth;
+                  }
+                }
+              }
+              
+              getSongV2(false);
+            }
+        }
+
+        function startSong () {
+            console.log("startSong");
+            var player = document.getElementById('myMusicPlayer');
+            if (play) {
+              console.log("PLAY");
+              player.start();
+            }
+            
+            console.log(player.src);
+            var visu1 = document.getElementById('myStaffVisualizer');
+            visu1.config = {
+              instruments : [0]
+            };
+            console.log(visu1.config);
+
+            var visu2 = document.getElementById('myStaffVisualizer2');
+            visu2.config = {
+              instruments : [1]
+            };
+            console.log(visu2.config);
+        }
+      
+        function getSong (userAction = true) {
+          var params = generateParams(1);
+          var clipboardField = document.getElementById('clipboardField');
+          clipboardField.value = "https://cuboid-chestnut-equipment.glitch.me/" + params + "&v=1"
+          fetch('/music'+params, 
+                {
+//                  headers : myHeaders,
+//                  body : {seed : seed + ''},
+//                  method : 'POST'
+                })
+                .then ( (res) => {
+                    return res.json();
+                })
+                .then ( (json) => {
+                    console.log(json);
+            
+                    var player = document.getElementById('myMusicPlayer');
+                    var downloadButton = document.getElementById('downloadButton');
+            
+                    play = userAction;
+                    player.src = json.data;
+                    downloadButton.classList.remove("hidden");
+                    downloadButton.href = json.data;
+                    //console.log(player.src);
+                })
+                .catch ( (a, b) => {
+                    console.log(a, b);
+                });
+
+          return false;
+        }
+      
+        function getSongV2 (userAction = true) {          
+          
+          var params = generateParams(2);
+          //https://cuboid-chestnut-equipment.glitch.me/
+          var clipboardField = document.getElementById('clipboardFieldV2');
+          clipboardField.value = "https://cuboid-chestnut-equipment.glitch.me/" + params + "&v=2"
+
+          fetch('/v2/music'
+                +params, 
+                {
+//                  headers : myHeaders,
+//                  body : {seed : seed + ''},
+//                  method : 'POST'
+                })
+                .then ( (res) => {
+                    return res.json();
+                })
+                .then ( (json) => {
+                    console.log(json);
+            
+                    var player = document.getElementById('myMusicPlayer');
+                    var infos = document.getElementById('infos');
+            
+                    play = userAction;
+                    player.src = json.music;
+                    infos.innerHTML = json.scale + " - " + JSON.stringify(json.chords) + '<br/>Tempo : ' + json.tempo;
+                    downloadButton.classList.remove("hidden");
+                    downloadButton.href = json.music;
+
+                })
+                .catch ( (a, b) => {
+                    console.log(a, b);
+                });
+
+          return false;
+        }
+    
+      
+        function getSongV3 (userAction = true) {          
+          
+          var params = generateParams(3);
+          //https://cuboid-chestnut-equipment.glitch.me/
+          var clipboardField = document.getElementById('clipboardFieldV3');
+          clipboardField.value = "https://cuboid-chestnut-equipment.glitch.me/" + params + "&v=3"
+
+          fetch('/v3/music' + params, 
+                {
+//                  headers : myHeaders,
+//                  body : {seed : seed + ''},
+//                  method : 'POST'
+                })
+                .then ( (res) => {
+                    return res.json();
+                })
+                .then ( (json) => {
+                    console.log(json);
+            
+                    var player = document.getElementById('myMusicPlayer');
+                    var infos = document.getElementById('infos');
+            
+                    play = userAction;
+                    player.src = json.music;
+                    infos.innerHTML = 'Tempo : ' + json.tempo;
+                    downloadButton.classList.remove("hidden");
+                    downloadButton.href = json.music;
+
+                })
+                .catch ( (a, b) => {
+                    console.log(a, b);
+                });
+
+          return false;
+        }
+  
+      
+        function getSongV4 (userAction = true) {          
+          
+          var params = generateParams(4);
+          //https://cuboid-chestnut-equipment.glitch.me/
+          var clipboardField = document.getElementById('clipboardFieldV4');
+          clipboardField.value = "https://cuboid-chestnut-equipment.glitch.me/" + params + "&v=4"
+
+          fetch('/v4/music' + params, 
+                {
+//                  headers : myHeaders,
+//                  body : {seed : seed + ''},
+//                  method : 'POST'
+                })
+                .then ( (res) => {
+                    return res.json();
+                })
+                .then ( (json) => {
+                    console.log(json);
+            
+                    var player = document.getElementById('myMusicPlayer');
+                    var infos = document.getElementById('infos');
+            
+                    play = userAction;
+                    player.src = json.music;
+                    infos.innerHTML = 'Tempo : ' + json.tempo;
+                    downloadButton.classList.remove("hidden");
+                    downloadButton.href = json.music;
+
+                })
+                .catch ( (a, b) => {
+                    console.log(a, b);
+                });
+
+          return false;
+        }
+  
+      function generateParams(version) {
+        var params = "?";
+        if (version == 1) {
+          var seed = document.getElementById('seed').value;
+          params += 'seed='+encodeURI(seed + '');
+          
+        } else if (version == 2) {
+          
+          var seed = document.getElementById('seedV2').value;
+          var scale = document.getElementById('scaleV2').value;
+          var tempo = document.getElementById('tempoV2').value;
+          var instrument = document.getElementById('instrumentV2').value;
+          var rhythmActive = document.getElementById('rhythmActiveV2').checked;
+          console.log(rhythmActive);
+          var rhythm = '';
+          if (rhythmActive) {
+              var whole = document.getElementById('wholeV2').value;
+              var half = document.getElementById('halfV2').value;
+              var quarter = document.getElementById('quarterV2').value;
+              var eighth = document.getElementById('eighthV2').value;
+              var sixteenth = document.getElementById('sixteenthV2').value;
+              rhythm = '&rhythmActive='+rhythmActive
+                +'&whole='+whole
+                +'&half='+half
+                +'&quarter='+quarter
+                +'&eighth='+eighth
+                +'&sixteenth='+sixteenth;
+          }
+          params += 'seed='+encodeURI(seed + '')
+                +"&scale="+scale
+                +'&instrument='+instrument
+                +'&tempo='+tempo
+                +rhythm
+        } else if (version == 3) {
+
+          var seed = document.getElementById('seedV3').value;
+          var tempo = document.getElementById('tempoV3').value;
+          var drums = document.getElementById('drumsV3').checked;
+          params += 'seed='+encodeURI(seed + '') +'&tempo='+tempo+'&instrument='+1;
+          console.log(drums);
+          if (drums) {
+            params += '&drums=true';
+          }
+        } else if (version == 4) {
+
+          var seed = document.getElementById('seedV4').value;
+          var tempo = document.getElementById('tempoV4').value;
+          var drums = document.getElementById('drumsV4').checked;
+          params += 'seed='+encodeURI(seed + '') +'&tempo='+tempo+'&instrument='+1;
+          console.log(drums);
+          if (drums) {
+            params += '&drums=true';
+          }
+        }
+        return params;
+      }
+      
+      function download() {
+        if (document.getElementById('myMusicPlayer').src) {
+          var url = document.getElementById('myMusicPlayer').src;
+          const downloadLink = document.createElement("a");
+          downloadLink.href = url;
+          downloadLink.click();
+        }
+      }
+      
+      function copyToClipboard() {
+        /* Get the text field */
+        var copyText = document.getElementById("myInput");
+
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+
+        /* Alert the copied text */
+        alert("Copied the text: " + copyText.value);
+      }
+
+    </script>
+</head>
+<body onload="setup();">
+  <div class="container mx-auto">
+    <!-- sergdfx -->
+    <h1>Procedurally generated melodies</h1>
+    <h4 id="infos"></h4>
+    <!--<input type='button' id="downloadButton" class='hidden' value="Download (.mid)" onclick="download();"/>-->
+    <a type='button' id="downloadButton" class='btn hidden' download="melody.mid" href="">Download (.mid)</a>
+    <br/>
+    <midi-player
+            src=""
+            sound-font visualizer="#myStaffVisualizer, #myStaffVisualizer2"
+            id="myMusicPlayer">
+    </midi-player>
+    <midi-visualizer type="staff" id="myStaffVisualizer"></midi-visualizer>
+    <midi-visualizer type="staff" id="myStaffVisualizer2"></midi-visualizer>
+    <br/>
+
+    <button class="btn primary" onclick="changeForm('musicForm')">V1</button>
+    <button class="btn primary" onclick="changeForm('musicFormV2')">V2</button>
+    <button class="btn ongoing" onclick="changeForm('musicFormV3')">V3</button>
+    <button class="btn ongoing" onclick="changeForm('musicFormV4')">V4</button>
+    
+    <form id="musicForm" class="hidden" name="musicForm" onsubmit="return getSong();">
+      <h3 class="text-center">V1 : Choose a seed and you'll always get the same melody.</h3>
+      <div class="container-flex">
+        <div class="field-div">
+          <label class="lbltop" for="seed">
+          Seed
+          </label>
+          <input class="txtfld" id="seed" type="text"/>
+        </div>
+        <div class="field-div">
+          <input class="btn primary" type="submit"/>
+          <input class="txtfld" id="clipboardField" disabled>
+        </div>
+      </div>
+    </form>
+    
+    <form id="musicFormV2" class="hidden" name="musicFormV2" onsubmit="return getSongV2();">
+      <h3 class="text-center">V2 : Choose a seed and adjust parameters to customize the melody.</h3>
+      <div class="container-flex">
+        <div class="field-div">
+          <label class="lbltop">Seed : </label>
+          <input class="txtfld" id="seedV2" type="text"/>
+        </div>
+        <div class="field-div">
+          <label class="lbltop">Scale : </label>
+          <select class="selectfld" id="scaleV2">
+              <option value="minor">Minor</option>
+              <option value="major">Major</option>
+          </select>
+        </div>
+        
+        <div class="field-div">
+          <label class="lbltop">Instrument : </label>
+          <select class="selectfld" id="instrumentV2">
+              <option value="1">Piano</option>
+              <option value="5">Electric Piano</option>
+              <option value="41">Violins</option>
+              <option value="30">Electric Guitar</option>
+          </select>
+        </div>
+        <div class="field-div">
+          <label class="lbltop">Tempo : </label><input type="range" id="tempoV2" name="tempoV2" min="50" max="200" step="5" value="110">
+        </div>
+        <div class="field-div">
+          <h4>Rhythm Settings <input id="rhythmActiveV2" type="checkbox"/></h4>
+          <div class="field-div">
+            <label class="lbltop">Whole notes : </label><input type="range" id="wholeV2" min="0" max="20" value="5">
+          </div>
+          <div class="field-div">
+            <label class="lbltop">Half notes : </label><input type="range" id="halfV2" min="0" max="20">
+          </div>
+          <div class="field-div">
+            <label class="lbltop">Quarter notes : </label><input type="range" id="quarterV2" min="0" max="20">
+          </div>
+          <div class="field-div">
+            <label class="lbltop">Eighth notes : </label><input type="range" id="eighthV2" min="0" max="20">
+          </div>
+          <div class="field-div">
+            <label class="lbltop">Sixteenth notes : </label><input type="range" id="sixteenthV2" min="0" max="20" value="0">
+          </div>
+          <input class="btn primary" type="submit"/>
+          <input class="txtfld" type="text" id="clipboardFieldV2" disabled />
+        </div>
+      </div>
+    </form>
+
+    <form id="musicFormV3" class="hidden" name="musicFormV3" onsubmit="return getSongV3();">
+      <h3 class="text-center">V3 (Dev Ongoing) : Percussions</h3>
+      <div class="container-flex">
+        <div class="field-div">
+          <label class="lbltop">Seed : </label><input class="txtfld" id="seedV3" type="text"/>
+        </div>
+        <div class="field-div">
+          <label class="lbltop">Tempo : </label><input type="range" id="tempoV3" name="tempoV3" min="50" max="200" step="5" value="110">
+        </div>
+        <div class="field-div">
+          <label class="lblinline">Drums</label><input class="m-2" type="checkbox" id="drumsV3"/>
+        </div>
+        <div class="field-div">
+          <input class="btn primary" type="submit"/>
+          <input class="txtfld" type="text" id="clipboardFieldV3" disabled size="50"/>
+        </div>
+      </div>
+    </form>
+
+    <form id="musicFormV4" name="musicFormV4" onsubmit="return getSongV4();">
+      <h3 class="text-center">V4 (Dev Ongoing) : Structure</h3>
+      <div class="container-flex">
+        <div class="field-div">
+          <label class="lbltop">Seed : </label><input class="txtfld" id="seedV4" type="text"/>
+        </div>
+        <div class="field-div">
+          <label class="lbltop">Tempo : </label><input type="range" id="tempoV4" name="tempoV4" min="50" max="200" step="5" value="110">
+        </div>
+        <div class="field-div">
+          <label class="lblinline">Drums</label><input class="m-2" type="checkbox" id="drumsV4"/>
+        </div>
+        <div class="field-div">
+          <input class="btn primary" type="submit"/>
+          <input class="txtfld" type="text" id="clipboardFieldV4" disabled size="50"/>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <footer>
+    Powered using 
+    <p>Midi file creation : <a href="https://www.npmjs.com/package/midi-writer-js">midi-writer-js</a></p>
+    <p>Midi Player : <a href="https://www.npmjs.com/package/html-midi-player">html-midi-player</a></p>
+
+  </footer>
+</body>
+</html>
+
+
+
+    <!--
+<form class="w-full max-w-sm">
+  <div class="md:flex md:items-center mb-6">
+    <div class="md:w-1/3">
+      <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+        Full Name
+      </label>
+    </div>
+    <div class="md:w-2/3">
+      <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" type="text" value="Jane Doe">
+    </div>
+  </div>
+  <div class="md:flex md:items-center mb-6">
+    <div class="md:w-1/3">
+      <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-password">
+        Password
+      </label>
+    </div>
+    <div class="md:w-2/3">
+      <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-password" type="password" placeholder="******************">
+    </div>
+  </div>
+  <div class="md:flex md:items-center mb-6">
+    <div class="md:w-1/3"></div>
+    <label class="md:w-2/3 block text-gray-500 font-bold">
+      <input class="mr-2 leading-tight" type="checkbox">
+      <span class="text-sm">
+        Send me your newsletter!
+      </span>
+    </label>
+  </div>
+  <div class="md:flex md:items-center">
+    <div class="md:w-1/3"></div>
+    <div class="md:w-2/3">
+      <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button">
+        Sign Up
+      </button>
+    </div>
+  </div>
+</form>
+    
+    <form class="w-full max-w-lg">
+  <div class="flex flex-wrap -mx-3 mb-6">
+    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
+        First Name
+      </label>
+      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Jane">
+      <p class="text-red-500 text-xs italic">Please fill out this field.</p>
+    </div>
+    <div class="w-full md:w-1/2 px-3">
+      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-last-name">
+        Last Name
+      </label>
+      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Doe">
+    </div>
+  </div>
+  <div class="flex flex-wrap -mx-3 mb-6">
+    <div class="w-full px-3">
+      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-password">
+        Password
+      </label>
+      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="password" placeholder="******************">
+      <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
+    </div>
+  </div>
+  <div class="flex flex-wrap -mx-3 mb-2">
+    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-city">
+        City
+      </label>
+      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="text" placeholder="Albuquerque">
+    </div>
+    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-state">
+        State
+      </label>
+      <div class="relative">
+        <select class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+          <option>New Mexico</option>
+          <option>Missouri</option>
+          <option>Texas</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-zip">
+        Zip
+      </label>
+      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="90210">
+    </div>
+  </div>
+</form>
+    -->
+
+
+      <!--
+        1 Acoustic Grand Piano
+        2 Bright Acoustic Piano
+        3 Electric Grand Piano
+        4 Honky-tonk Piano
+        5 Electric Piano 1
+        6 Electric Piano 2
+        7 Harpsichord
+        8 Clavinet
+
+        Chromatic Percussion:
+        9 Celesta
+        10 Glockenspiel
+        11 Music Box
+        12 Vibraphone
+        13 Marimba
+        14 Xylophone
+        15 Tubular Bells
+        16 Dulcimer
+
+        Organ:
+        17 Drawbar Organ
+        18 Percussive Organ
+        19 Rock Organ
+        20 Church Organ
+        21 Reed Organ
+        22 Accordion
+        23 Harmonica
+        24 Tango Accordion
+
+        Guitar:
+        25 Acoustic Guitar (nylon)
+        26 Acoustic Guitar (steel)
+        27 Electric Guitar (jazz)
+        28 Electric Guitar (clean)
+        29 Electric Guitar (muted)
+        30 Overdriven Guitar
+        31 Distortion Guitar
+        32 Guitar harmonics
+
+        Bass:
+        33 Acoustic Bass
+        34 Electric Bass (finger)
+        35 Electric Bass (pick)
+        36 Fretless Bass
+        37 Slap Bass 1
+        38 Slap Bass 2
+        39 Synth Bass 1
+        40 Synth Bass 2
+
+        Strings:
+        41 Violin
+        42 Viola
+        43 Cello
+        44 Contrabass
+        45 Tremolo Strings
+        46 Pizzicato Strings
+        47 Orchestral Harp
+        48 Timpani
+
+        Strings (continued):
+        49 String Ensemble 1
+        50 String Ensemble 2
+        51 Synth Strings 1
+        52 Synth Strings 2
+        53 Choir Aahs
+        54 Voice Oohs
+        55 Synth Voice
+        56 Orchestra Hit
+
+        Brass:
+        57 Trumpet
+        58 Trombone
+        59 Tuba
+        60 Muted Trumpet
+        61 French Horn
+        62 Brass Section
+        63 Synth Brass 1
+        64 Synth Brass 2
+
+        Reed:
+        65 Soprano Sax
+        66 Alto Sax
+        67 Tenor Sax
+        68 Baritone Sax
+        69 Oboe
+        70 English Horn
+        71 Bassoon
+        72 Clarinet
+
+        Pipe:
+        73 Piccolo
+        74 Flute
+        75 Recorder
+        76 Pan Flute
+        77 Blown Bottle
+        78 Shakuhachi
+        79 Whistle
+        80 Ocarina
+
+        Synth Lead:
+        81 Lead 1 (square)
+        82 Lead 2 (sawtooth)
+        83 Lead 3 (calliope)
+        84 Lead 4 (chiff)
+        85 Lead 5 (charang)
+        86 Lead 6 (voice)
+        87 Lead 7 (fifths)
+        88 Lead 8 (bass + lead)
+
+        Synth Pad:
+        89 Pad 1 (new age)
+        90 Pad 2 (warm)
+        91 Pad 3 (polysynth)
+        92 Pad 4 (choir)
+        93 Pad 5 (bowed)
+        94 Pad 6 (metallic)
+        95 Pad 7 (halo)
+        96 Pad 8 (sweep)
+
+        Synth Effects:
+        97 FX 1 (rain)
+        98 FX 2 (soundtrack)
+        99 FX 3 (crystal)
+        100 FX 4 (atmosphere)
+        101 FX 5 (brightness)
+        102 FX 6 (goblins)
+        103 FX 7 (echoes)
+        104 FX 8 (sci-fi)
+
+        Ethnic:
+        105 Sitar
+        106 Banjo
+        107 Shamisen
+        108 Koto
+        109 Kalimba
+        110 Bag pipe
+        111 Fiddle
+        112 Shanai
+
+        Percussive:
+        113 Tinkle Bell
+        114 Agogo
+        115 Steel Drums
+        116 Woodblock
+        117 Taiko Drum
+        118 Melodic Tom
+        119 Synth Drum
+
+        Sound effects:
+        120 Reverse Cymbal
+        121 Guitar Fret Noise
+        122 Breath Noise
+        123 Seashore
+        124 Bird Tweet
+        125 Telephone Ring
+        126 Helicopter
+        127 Applause
+        128 Gunshot
+        -->
+
+
+
+      <!--
+      <h4>Staff Settings</h4>
+      <br/>
+      <label>Chords : </label><input checked id="chordsV2" type="checkbox"/>
+      <br/>
+      <label>Soprano : </label><input checked id="sopranoV2" type="checkbox"/>
+      <br/>
+      <label>Alto : </label><input id="altoV2" type="checkbox"/>
+      <br/>
+      <label>Bass : </label><input id="bassV2" type="checkbox"/>
+      <br/>
+      -->
