@@ -1,0 +1,51 @@
+{
+  "name": "my-webpack-project",
+  "version": "1.0.0",
+  "description": "My webpack project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "npx tailwindcss -i tailwind.css -o build.css",
+    "watch": "npx tailwindcss -i tailwind.css -o build.css --watch"
+  },
+  "dependencies": {
+    "fastify": "^3.24.0",
+    "fastify-formbody": "^5.2.0",
+    "fastify-static": "^4.5.0",
+    "handlebars": "^4.7.7",
+    "midi-writer-js": "^2.0.1",
+    "oauth": "^0.9.15",
+    "oauth-signature": "^1.5.0",
+    "point-of-view": "^4.15.2",
+    "random-seed": "^0.3.0",
+    "seedrandom": "^3.0.5",
+    "twit": "^2.2.11"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/zenith-gainful-macaw"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@webpack-cli/generators": "^2.4.1",
+    "autoprefixer": "^10.4.0",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.5.1",
+    "mini-css-extract-plugin": "^2.4.4",
+    "postcss": "^8.3.11",
+    "postcss-loader": "^6.2.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.64.1",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.5.0"
+  }
+}

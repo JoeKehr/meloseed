@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded border-black border font-bold;
+  }
+  
+  .txtfld {
+    @apply appearance-none block w-full bg-gray-200 border-black border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white;
+  }
+  
+  .txtfld[disabled] {
+    @apply appearance-none block w-full bg-gray-300 border-black border rounded py-3 px-4 mb-3 leading-tight focus:outline-none;
+  }
+  
+  .lbltop {
+    @apply block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2;
+  }
+  
+  .lblinline {
+    @apply inline uppercase tracking-wide text-gray-700 text-xs font-bold mb-2;
+  }
+  
+  .selectfld {
+    @apply block w-full bg-gray-200 border-black border rounded py-3 px-4 mb-3 leading-tight;
+  }
+  
+  .container-flex {
+    @apply flex flex-wrap -mx-3 mb-6;
+  }
+  
+  .field-div {
+    @apply w-full px-3;
+  }
+  
+  .container-div {
+    @apply m-4 box-border p-4 border border-black rounded justify-center w-full max-w-lg;
+  }
+}
+
+@layer base {
+  
+  form {
+    @apply m-4 box-border p-4 border border-black rounded justify-center w-full max-w-lg;
+  }
+  
+  h1 {
+    @apply text-4xl;
+  }
+  
+  h2 {
+    @apply text-3xl;
+  }
+  
+  h3 {
+    @apply text-2xl;
+  }
+  
+  h4 {
+    @apply text-xl;
+  }
+ 
+  .btn.ongoing {
+    @apply bg-yellow-600 text-white;
+  }
+ 
+  .btn.primary {
+    @apply bg-blue-600 text-white;
+  }
+ 
+  .btn.error {
+    @apply bg-red-600 text-white;
+  }
+ 
+  .btn.ok {
+    @apply bg-green-600 text-white;
+  }
+  
+  input:not([type="submit"],[type="button"]) {
+    @apply border border-black;
+  }
+  
+  input[type="submit"] {
+    @apply btn;
+  }
+  
+  footer {
+    padding : 10px;
+    /*position: fixed;*/
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+    text-align: center;
+  }
+  
+  footer a {
+    color: white;
+  }
+  
+  .hidden {
+    display: none;
+  }
+}
